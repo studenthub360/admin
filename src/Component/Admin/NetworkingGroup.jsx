@@ -6,6 +6,7 @@ const AdminNetworkingGroupsPage = () => {
     groupName: "",
     groupLink: "",
     description: "",
+    image: null,
   });
 
   useEffect(() => {
@@ -33,7 +34,6 @@ const AdminNetworkingGroupsPage = () => {
 
       const groupsData = await response.json([]);
       setGroups(groupsData || []); // Ensure groups array is defined or use an empty array
-      console.log(groupsData);
     } catch (error) {
       console.error("Error fetching networking groups:", error);
       alert("Failed to fetch networking groups. Please try again.");
@@ -41,16 +41,32 @@ const AdminNetworkingGroupsPage = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewGroup((prevGroup) => ({
-      ...prevGroup,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+
+    // If the input is a file (image), set the image property in the state
+    if (name === "image") {
+      setNewGroup((prevGroup) => ({
+        ...prevGroup,
+        [name]: files[0], // Store the File object directly
+      }));
+    } else {
+      setNewGroup((prevGroup) => ({
+        ...prevGroup,
+        [name]: value,
+      }));
+    }
   };
 
   const handleAddGroup = async () => {
     try {
       const token = sessionStorage.getItem("accessToken");
+
+      // Create a FormData object to handle the file upload
+      const formData = new FormData();
+      formData.append("groupName", newGroup.groupName);
+      formData.append("groupLink", newGroup.groupLink);
+      formData.append("description", newGroup.description);
+      formData.append("image", newGroup.image); // Append the File object
 
       // Send a POST request to add a new networking group
       const response = await fetch(
@@ -59,9 +75,8 @@ const AdminNetworkingGroupsPage = () => {
           method: "POST",
           headers: {
             Authorization: `${token}`,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify(newGroup),
+          body: formData,
         }
       );
 
@@ -110,14 +125,14 @@ const AdminNetworkingGroupsPage = () => {
             onChange={handleInputChange}
             className="p-2 border rounded-md w-1/4"
           />
-          {/* <input
-            type="text"
+          <input
+            type="file"
             name="image"
+            accept="image/*"
             placeholder="Image URL"
-            value={newGroup.image}
             onChange={handleInputChange}
             className="p-2 border rounded-md w-1/4"
-          /> */}
+          />
           <button
             onClick={handleAddGroup}
             className="bg-[#3B50FE] text-white px-4 py-2 rounded-md"
@@ -129,24 +144,25 @@ const AdminNetworkingGroupsPage = () => {
 
       <div>
         <h2 className="text-xl font-bold mb-4">Networking Groups List</h2>
-        <ul className=" list-inside">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {groups.map((group, index) => (
-            <li key={index}>
+            <div key={index} className="bg-white pb-6  text-center rounded-xl shadow-md">
+                <img
+                src={group.imageUrl}
+                alt="Event"
+                className="w-full h-fit object-cover"
+              />
               <strong>Group Name:</strong> {group.groupName}
               <br />
               <strong>Group Link:</strong> {group.groupLink}
               <br />
               <strong>Description:</strong> {group.groupDescription}
               <br />
-              <strong>Image:</strong>{" "}
-              {group.image !== "null" ? (
-                <img src={group.image} alt={group.groupName} />
-              ) : (
-                "Not available"
-              )}
-            </li>
+     
+            
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

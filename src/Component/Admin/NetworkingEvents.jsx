@@ -97,7 +97,7 @@ const AdminNetworkingEventsPage = () => {
   };
 
   return (
-    <div className="container  w-1/2 mt-8">
+    <div className="container w-fit  mt-8">
       <h1 className="text-3xl font-bold mb-8  text-[#3B50FE]">
         Admin Networking Events Page
       </h1>
@@ -161,28 +161,32 @@ const AdminNetworkingEventsPage = () => {
 
       <div>
         <h2 className="text-xl font-bold mb-4">Networking Events List</h2>
-        <ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {events.map((event, index) => (
-            <li key={index}>
-              <strong>Group Name:</strong> {event.groupName}
-              <br />
-              <strong>Details:</strong> {event.details}
-              <br />
+            <div
+              className="bg-white pb-6  text-center rounded-xl shadow-md"
+              key={index}
+            >
+              <img
+                src={event.imageUrl}
+                alt="Event"
+                className="w-full h-fit object-cover"
+              />
+               <h3 className="text-xl font-semibold mb-2 text-[#3A4FFE]">
+              {event.groupName}
+            </h3>
+              
+            <p className="text-gray-600 p-2">{event.details}</p>
               <strong>Contact:</strong> {event.eventContact}
               <br />
               <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
               <br />
-              <strong>Time:</strong> {new Date(event.time).toLocaleTimeString()}
+              <strong>Time:</strong> {event.time}
               <br />
-              <img
-                src={`https://student360-api.onrender.com/${event.image}`}
-                alt="Event"
-                style={{ maxWidth: "200px", maxHeight: "200px" }}
-              />
-              <hr />
-            </li>
+              
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
