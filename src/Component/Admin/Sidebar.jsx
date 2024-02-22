@@ -28,13 +28,13 @@ const Sidebar = () => {
           </li>
           <li className="p-4">
             <Link to="/Nevents" className="flex gap-2">
-              <img src={playlist} className="w-8 h-8" />
+              <img src={playlist} alt="event" className="w-8 h-8" />
               Networking events
             </Link>
           </li>
           <li className="p-4">
             <Link to="/Ngroups" className="flex gap-2">
-              <img src={playlist} className="w-8 h-8" />
+              <img src={playlist} alt="group" className="w-8 h-8" />
               Networking groups
             </Link>
           </li>
@@ -87,7 +87,7 @@ const Sidebar = () => {
               Networking groups
             </Link>
             <Link to="/" className="flex gap-2">
-              <img src={logoutblack} className=" w-5 ml-4   " />
+              <img src={logoutblack} alt="logout" className=" w-5 ml-4   " />
               Logout
             </Link>
           </div>
@@ -96,7 +96,7 @@ const Sidebar = () => {
       {/* Logout link */}
       <div className="p-6 items-center font-semibold">
         <Link to="/" className="flex text-white gap-2">
-          <img src={logout} className="w-6 " />
+          <img src={logout} alt="logout" className="w-6 " />
           Logout
         </Link>
       </div>

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.def9fd87.css",
+    "main.js": "/static/js/main.2be969cd.js",
+    "static/media/magiona-display.ttf": "/static/media/magiona-display.9ea2fafcf907f3ebeca4.ttf",
+    "static/media/image.png": "/static/media/image.430869a79a9150b63103.png",
+    "index.html": "/index.html",
+    "main.def9fd87.css.map": "/static/css/main.def9fd87.css.map",
+    "main.2be969cd.js.map": "/static/js/main.2be969cd.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.def9fd87.css",
+    "static/js/main.2be969cd.js"
+  ]
+}
