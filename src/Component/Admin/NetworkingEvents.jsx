@@ -1,206 +1,191 @@
+import React, { useState, useEffect } from "react";
 
-// NetworkingEvents.js
+const AdminNetworkingEventsPage = () => {
+  const [events, setEvents] = useState([]);
+  const [newEvent, setNewEvent] = useState({
+    groupName: "",
+    details: "",
+    eventContact: "",
+    date: "",
+    time: "",
+    image: null, // Added image field
+  });
 
-import React, { useState } from 'react';
-import Carousel from 'react-elastic-carousel'; // Install this package
+  useEffect(() => {
+    // Fetch networking events data when the component mounts
+    fetchNetworkingEvents();
+  }, []);
 
-const NetworkingEvents = () => {
-  const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [eventTime, setEventTime] = useState('');
-  const [eventLocation, setEventLocation] = useState('');
-  const [eventContact, setEventContact] = useState('');
-  const [eventImage, setEventImage] = useState(null); // Handle image upload
+  const fetchNetworkingEvents = async () => {
+    try {
+      const token = sessionStorage.getItem("accessToken");
 
-  // Dummy events data (replace with actual data)
-  const dummyEvents = [
-    { id: 1, name: 'Event 1', date: '2024-03-15', time: '10:00 AM', location: 'Venue A' },
-    { id: 2, name: 'Event 2', date: '2024-03-16', time: '2:30 PM', location: 'Venue B' },
-    // Add more event objects as needed
-  ];
+      // Fetch networking events data from the API
+      const response = await fetch(
+        "https://student360-api.onrender.com/api/netevents",
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      );
 
-  return (
-    <div>
-      <h2>Networking Events</h2>
-      <form>
-        <label htmlFor="eventName">Event Name:</label>
-        <input
-          type="text"
-          id="eventName"
-          value={eventName}
-          onChange={(e) => setEventName(e.target.value)}
-        />
-        {/* Add other form fields (date, time, location, contact, image upload) */}
-        {/* Implement image upload logic */}
-      </form>
+      if (!response.ok) {
+        throw new Error("Failed to fetch networking events");
+      }
 
-      <h3>Added Events</h3>
-      <Carousel itemsToShow={4}>
-        {dummyEvents.map((event) => (
-          <div key={event.id}>
-            <h4>{event.name}</h4>
-            <p>Date: {event.date}</p>
-            <p>Time: {event.time}</p>
-            <p>Location: {event.location}</p>
-          </div>
-        ))}
-      </Carousel>
-    </div>
-  );
-};
-
-export default NetworkingEvents;
-
-/*import React, { useState } from "react";
-import Carousel from "react-elastic-carousel";
-
-const AddEventForm = () => {
-  const [eventName, setEventName] = useState("");
-  const [eventDateTime, setEventDateTime] = useState("");
-  const [eventLocation, setEventLocation] = useState("");
-  const [contactInfo, setContactInfo] = useState("");
-  const [eventImage, setEventImage] = useState(null);
-  const [addedEvents, setAddedEvents] = useState([]);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setEventImage(file);
+      const eventsData = await response.json();
+      setEvents(eventsData || []);
+    } catch (error) {
+      console.error("Error fetching networking events:", error);
+      alert("Failed to fetch networking events. Please try again.");
+    }
   };
 
-  const addEvent = () => {
-    const newEvent = {
-      id: Date.now(),
-      name: eventName,
-      dateTime: eventDateTime,
-      location: eventLocation,
-      contactInfo: contactInfo,
-      image: eventImage,
-    };
-    setAddedEvents([...addedEvents, newEvent]);
-    // Reset form fields
-    setEventName("");
-    setEventDateTime("");
-    setEventLocation("");
-    setContactInfo("");
-    setEventImage(null);
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+
+    // If the input is a file (image), set the image property in the state
+    if (name === "image") {
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        [name]: files[0],
+      }));
+    } else {
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleAddEvent = async () => {
+    try {
+      const token = sessionStorage.getItem("accessToken");
+
+      // Create a FormData object to handle image file
+      const formData = new FormData();
+      formData.append("groupName", newEvent.groupName);
+      formData.append("details", newEvent.details);
+      formData.append("eventContact", newEvent.eventContact);
+      formData.append("date", newEvent.date);
+      formData.append("time", newEvent.time);
+      formData.append("image", newEvent.image); // Append image file
+
+      // Send a POST request to add a new networking event
+      const response = await fetch(
+        "https://student360-api.onrender.com/api/netevents",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to add networking event");
+      }
+
+      // Fetch the updated list of networking events
+      fetchNetworkingEvents();
+    } catch (error) {
+      console.error("Error adding networking event:", error);
+      alert("Failed to add networking event. Please try again.");
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Add Event</h1>
-      <form>
-        <div className="mb-4">
-          <label htmlFor="eventName" className="block font-semibold mb-1">
-            Event Name:
-          </label>
+    <div className="container  w-1/2 mt-8">
+      <h1 className="text-3xl font-bold mb-8  text-[#3B50FE]">
+        Admin Networking Events Page
+      </h1>
+
+      <div className="mb-6">
+        {/* <h2 className="text-xl font-bold mb-4">Add New Networking Event</h2> */}
+        <div className="flex flex-col space-y-4">
           <input
             type="text"
-            id="eventName"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 w-full"
+            name="groupName"
+            placeholder="Group Name"
+            value={newEvent.groupName}
+            onChange={handleInputChange}
+            className="p-2 border rounded-md"
           />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="eventDateTime" className="block font-semibold mb-1">
-            Date and Time:
-          </label>
-          <input
-            type="datetime-local"
-            id="eventDateTime"
-            value={eventDateTime}
-            onChange={(e) => setEventDateTime(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 w-full"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="eventLocation" className="block font-semibold mb-1">
-            Location:
-          </label>
           <input
             type="text"
-            id="eventLocation"
-            value={eventLocation}
-            onChange={(e) => setEventLocation(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 w-full"
+            name="details"
+            placeholder="Details"
+            value={newEvent.details}
+            onChange={handleInputChange}
+            className="p-2 border rounded-md"
           />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="contactInfo" className="block font-semibold mb-1">
-            Contact Information:
-          </label>
           <input
             type="text"
-            id="contactInfo"
-            value={contactInfo}
-            onChange={(e) => setContactInfo(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 w-full"
+            name="eventContact"
+            placeholder="Event Contact"
+            value={newEvent.eventContact}
+            onChange={handleInputChange}
+            className="p-2 border rounded-md"
           />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="eventImage" className="block font-semibold mb-1">
-            Event Image:
-          </label>
+          <input
+            type="date"
+            name="date"
+            value={newEvent.date}
+            onChange={handleInputChange}
+            className="p-2 border rounded-md"
+          />
+          <input
+            type="time"
+            name="time"
+            value={newEvent.time}
+            onChange={handleInputChange}
+            className="p-2 border rounded-md"
+          />
           <input
             type="file"
-            id="eventImage"
-            onChange={handleImageChange}
-            className="border border-gray-300 rounded-lg p-2 w-full"
+            name="image"
+            accept="image/*"
+            onChange={handleInputChange}
+            className="p-2 border rounded-md"
           />
+          <button
+            onClick={handleAddEvent}
+            className="bg-[#3B50FE] text-white px-4 py-2 rounded-md"
+          >
+            Add Event
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={addEvent}
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-        >
-         Upload Poster
-        </button>
-      </form>
+      </div>
 
-      <div className="mt-8">
-        <h2 className="text-3xl font-bold mb-4">Added Events</h2>
-        <Carousel itemsToShow={3} pagination>
-          {addedEvents.map((event) => (
-            <div key={event.id} className="w-full">
-              <div className="border rounded-lg p-4">
-                {event.image && (
-                  <img
-                    src={URL.createObjectURL(event.image)}
-                    alt={event.name}
-                    className="w-full h-40 object-cover rounded-lg mb-4"
-                  />
-                )}
-                <h3 className="text-xl font-semibold mb-2">{event.name}</h3>
-                <p className="mb-2">Date and Time: {event.dateTime}</p>
-                <p className="mb-2">Location: {event.location}</p>
-                <p className="mb-2">Contact Info: {event.contactInfo}</p>
-              </div>
-            </div>
-            
+      <div>
+        <h2 className="text-xl font-bold mb-4">Networking Events List</h2>
+        <ul>
+          {events.map((event, index) => (
+            <li key={index}>
+              <strong>Group Name:</strong> {event.groupName}
+              <br />
+              <strong>Details:</strong> {event.details}
+              <br />
+              <strong>Contact:</strong> {event.eventContact}
+              <br />
+              <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
+              <br />
+              <strong>Time:</strong> {new Date(event.time).toLocaleTimeString()}
+              <br />
+              <img
+                src={`https://student360-api.onrender.com/${event.image}`}
+                alt="Event"
+                style={{ maxWidth: "200px", maxHeight: "200px" }}
+              />
+              <hr />
+            </li>
           ))}
-           {addedEvents.map((event) => (
-            <div key={event.id} className="w-full">
-              <div className="border rounded-lg p-4">
-                {event.image && (
-                  <img
-                    src={URL.createObjectURL(event.image)}
-                    alt={event.name}
-                    className="w-full h-40 object-cover rounded-lg mb-4"
-                  />
-                )}
-                <h3 className="text-xl font-semibold mb-2">{event.name}</h3>
-                <p className="mb-2">Date and Time: {event.dateTime}</p>
-                <p className="mb-2">Location: {event.location}</p>
-                <p className="mb-2">Contact Info: {event.contactInfo}</p>
-              </div>
-            </div>
-            
-          ))}
-        </Carousel>
+        </ul>
       </div>
     </div>
   );
 };
 
-export default AddEventForm;
-*/
+export default AdminNetworkingEventsPage;
