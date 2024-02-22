@@ -1,8 +1,6 @@
 // Navbar.js
 import React from "react";
 import { Link } from "react-router-dom";
-import image from "./images/Ellipse 86.png";
-import arrow from "./images/arrow.png";
 // import { FaUser } from "react-icons/fa";
 
 const Navbar = () => {

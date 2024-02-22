@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import Nevents from "./NetworkingEvents";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
-import forum from "./images/forum.png";
+
 
 const TimeManagement = () => {
   return (

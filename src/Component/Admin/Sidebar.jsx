@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import calen from "./images/calen.png";
-import task from "./images/task.png";
-import event from "./images/event.png";
 import logout from "./images/logout.png";
 import logoutblack from "./images/logoutblack.png";
-import stress from "./images/stress.png";
-import coping from "./images/coping.png";
 import playlist from "./images/playlist.png";
 import { FaUser } from "react-icons/fa";
 
