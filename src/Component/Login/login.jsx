@@ -158,12 +158,12 @@ const Login = ({ onLogin }) => {
               <div className="loader:after"></div>
             </div>
           )}
-          <p className="mt-4 text-sm text-center lg:text-center">
+          {/* <p className="mt-4 text-sm text-center lg:text-center">
             Don't have an account?{" "}
             <Link to="/signup" className="text-[#3A4FFE]">
               Sign Up
             </Link>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
